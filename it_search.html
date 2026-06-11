@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Our IT - поиск</title>
+    </head>
+    <body>
+        <h1>Поиск</h1>
+        <form action="/search" method="post">
+            <input placeholder="Найдите что-то тут!" type="text" name="search"><br><br>
+            <button>Искать</button>
+        </form>
+
+        {{range .Message}}
+            <h3>{{.Name}}</h3>
+            <h4>{{.Mes}}</h4>
+            {{if .Code}}
+                <code>
+                    {{.Code}}
+                </code>
+            {{end}}
+            <p>{{.Time}}</p>
+        {{end}}
+
+        {{range .Account}}
+            <h3>{{.NameAcc}}</h3>
+            <p>{{.TimeAcc}}</p>
+        {{end}}
+    </body>
+</html>

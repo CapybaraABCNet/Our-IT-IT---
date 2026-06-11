@@ -54,6 +54,11 @@ func handle(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if !isValidEnglishNickname(name) {
+			http.Error(w, "Никнейм должен содержать только английские буквы (a-z, A-Z)", http.StatusBadRequest)
+			return
+		}
+
 		var count int
 		err := db.QueryRow("SELECT COUNT(*) FROM users WHERE name = ?", name).Scan(&count)
 		if err != nil {
@@ -86,4 +91,14 @@ func handle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.Execute(w, nil)
+}
+
+func isValidEnglishNickname(name string) bool {
+	for i := 0; i < len(name); i++ {
+		b := name[i]
+		if !(b >= 'A' && b <= 'Z' || b >= 'a' && b <= 'z') {
+			return false
+		}
+	}
+	return len(name) > 0
 }

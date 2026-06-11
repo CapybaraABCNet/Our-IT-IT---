@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Our IT - ответ на сообщение №{{.}}</title>
+    </head>
+    <body>
+        <form action="/otvet?id={{.}}" method="post">
+            <label>Введите текст</label><br>
+            <input type="text" name="mess"><br><br>
+            <label>Введите код (необязательно)</label><br>
+            <textarea type="text" name="code"></textarea><br><br>
+            <button>Отправить ответ</button>
+        </form>
+    </body>
+</html>

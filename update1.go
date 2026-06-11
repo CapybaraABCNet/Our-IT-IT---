@@ -42,7 +42,7 @@ func update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie, err := r.Cookie("session_user")
+	cookie, err := r.Cookie("session_id")
 	if err != nil {
 		http.Error(w, "Сначала авторизуйтесь!", http.StatusBadRequest)
 		return
@@ -71,6 +71,11 @@ func update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		if !isValidEnglishNickname(name) {
+			http.Error(w, "Никнейм должен содержать только английские буквы (a-z, A-Z)", http.StatusBadRequest)
+			return
+		}
+
 		var count1 int
 		err = db.QueryRow("SELECT COUNT(*) FROM users WHERE name = ?", name).Scan(&count1)
 		if err != nil {
@@ -91,8 +96,29 @@ func update(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		_, err = db.Exec("UPDATE posts SET name = ? WHERE TRIM(name) = ?", name, Name)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "Ошибка обновления имени", http.StatusBadRequest)
+			return
+		}
+
+		_, err = db.Exec("UPDATE answer SET name = ? WHERE TRIM(name) = ?", name, Name)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "Ошибка обновления имени", http.StatusBadRequest)
+			return
+		}
+
+		_, err = db.Exec("UPDATE answer SET name_post = ? WHERE TRIM(name_post) = ?", name, Name)
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "Ошибка обновления имени", http.StatusBadRequest)
+			return
+		}
+
 		updatedCookie := &http.Cookie{
-			Name:     "session_user",
+			Name:     "session_id",
 			Value:    name,
 			Path:     "/",
 			HttpOnly: true,
@@ -104,4 +130,14 @@ func update(w http.ResponseWriter, r *http.Request) {
 
 	}
 	tmpl.Execute(w, nil)
+}
+
+func isValidEnglishNickname(name string) bool {
+	for i := 0; i < len(name); i++ {
+		b := name[i]
+		if !(b >= 'A' && b <= 'Z' || b >= 'a' && b <= 'z') {
+			return false
+		}
+	}
+	return len(name) > 0
 }

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Our IT - лента</title>
+    </head>
+    <body>
+        <h1>Лента сообщений</h1>
+        <form action="/forum" method="post">
+            <label>Напишите сообщение</label><br>
+            <input type="text" name="mes"><br><br>
+            <label>Код (необязательно)</label><br>
+            <textarea type="text" name="code"></textarea><br><br>
+            <button>Отправить</button>
+        </form>
+        {{range .Message}}
+        
+            <h3>{{.Name}}</h3>
+            <h4>{{.Mes}}</h4>
+            {{if .Code}}
+                <code>
+                    {{.Code}}
+                </code>
+            {{end}}
+            <p>{{.Time}}</p>
+            <a href="/otvet?id={{.ID1}}">Ответить</a>
+            {{if .Otvets}}
+                <div style="margin-left: 20px; background: #f9f9f9; padding: 10px; border-left: 3px solid gray;">
+                {{range .Otvets}}
+                    <hr>
+                    <h3>{{.NameOtvet}} ➔ {{.NameTo}}</h3>
+                    <h4>{{.MesOtvet}}</h4>
+                    {{if .CodeOtvet}}
+                        <code>
+                            {{.CodeOtvet}}
+                        </code>
+                    {{end}}
+                    <p>{{.TimeOtvet}}</p>
+                    
+                {{end}}
+                </div>
+            {{else}}
+                <p>Ответов пока нет, будь первым!</p>
+            {{end}}
+        {{end}}
+    </body>
+</html>

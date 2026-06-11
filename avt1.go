@@ -43,7 +43,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	cookie, err := r.Cookie("session_user")
+	cookie, err := r.Cookie("session_id")
 	if err == nil {
 		http.Error(w, "Вы уже вошли в систему", http.StatusAccepted)
 		return
@@ -57,6 +57,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 			http.Error(w, "Вы должны заполнить все поля ввода", http.StatusBadRequest)
 			return
 		}
+		fmt.Println(name)
 
 		var hashedPassword string
 
@@ -71,6 +72,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+		fmt.Println(name)
 
 		err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(pass))
 		if err != nil {
@@ -85,10 +87,11 @@ func login(w http.ResponseWriter, r *http.Request) {
 				Path:     "/",
 				HttpOnly: true,
 				MaxAge:   2678400,
+				SameSite: http.SameSiteLaxMode,
 			}
 			http.SetCookie(w, cookie)
 			log.Println("🍪 Куки установлены!")
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, "/forum", http.StatusFound)
 			return
 		}
 	}
